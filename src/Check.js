@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import back1 from "../src/Images/back1.jpg";
 import check2 from "../src/Images/check2.svg";
-import { Button, Paper } from "@mui/material";
+import { Button, Paper, Divider, AppBar } from "@mui/material";
 import StartIcon from "@mui/icons-material/Start";
 import Alert from "@mui/material/Alert";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
@@ -163,7 +163,6 @@ const Check = () => {
 
   const getLocation = async (coord) => {
     try {
-      // console.log(coord.Latitude, coord.Longitude);
       let url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coord.Latitude}&longitude=${coord.Longitude}&localityLanguage=en`;
       const response = await fetch(url);
       const data = await response.json();
@@ -304,13 +303,19 @@ const Check = () => {
         height: "120vh",
       }}
     >
-      <Container>
+      <Container maWidth="sm">
         <Grid container spacing={0} justifyContent="center">
-          <Grid item lg={12} xs={10}>
-            <>
+          <Grid item lg={12} xs={12}>
+            <Box
+              sx={{
+                flexGrow: 1,
+                paddingTop: "45px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
               <Card
                 sx={{
-                  mt: 3,
                   backgroundColor: "#fff",
                   borderRadius: "5px",
                 }}
@@ -328,8 +333,9 @@ const Check = () => {
                 >
                   System Compatability Check
                 </Typography>
+                <Divider />
                 <Grid container justifyContent="center" spacing={0}>
-                  <Grid item lg={6} xs={10}>
+                  <Grid item lg={7} xs={12}>
                     <Box sx={{ maxWidth: 400, m: 5 }}>
                       <Stepper activeStep={activeStep} orientation="vertical">
                         {steps.map((step, index) => (
@@ -415,7 +421,6 @@ const Check = () => {
                                           fontweight: "bold",
                                           mr: 1,
                                           color: "black",
-                                          mb: 0.2,
                                         }}
                                       >
                                         <PhotoCameraIcon
@@ -530,20 +535,26 @@ const Check = () => {
                       )}
                     </Box>
                   </Grid>
-                  <Grid item lg={6}>
-                    <Box>
-                      <img
-                        src={check2}
-                        height="450px"
-                        width="450px"
-                        alt="system"
-                        style={{ marginTop: "45px" }}
-                      />
-                    </Box>
-                  </Grid>
+                  <Grid
+                    item
+                    lg={5}
+                    xs={false}
+                    sx={{
+                      backgroundImage: `url(${check2})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundColor: (t) =>
+                        t.palette.mode === "light"
+                          ? t.palette.grey[50]
+                          : t.palette.grey[900],
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      height: "360px",
+                      mt: 10,
+                    }}
+                  ></Grid>
                 </Grid>
               </Card>
-            </>
+            </Box>
           </Grid>
         </Grid>
       </Container>

@@ -4,6 +4,7 @@ import SystemCheck from './SystemCheck'
 import Check from "./Check";
 import ExamTime from "./ExamTime";
 import Demo from "./Demo";
+import Demostep from "./Demostep";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/check" element={<Check />}></Route>
         <Route path="/exam" element={<ExamTime />}></Route>
         <Route path="/demo" element={<Demo />}></Route>
+        <Route path="/demop" element={<Demostep />}></Route>
   
 
       </Routes>
