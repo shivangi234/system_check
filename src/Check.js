@@ -12,8 +12,8 @@ import StepContent from "@mui/material/StepContent";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import back1 from "../src/Images/back1.jpg";
-import check2 from "../src/Images/check2.svg";
-import { Button, Paper, Divider, AppBar } from "@mui/material";
+import connect from "../src/Images/connect3.gif";
+import { Button, Paper, Divider, Grow } from "@mui/material";
 import StartIcon from "@mui/icons-material/Start";
 import Alert from "@mui/material/Alert";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
@@ -21,19 +21,19 @@ import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import audiowave from "./Images/audiowave.gif";
-
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 800,
-  height: 590,
+  width: "50%",
   bgcolor: "background.paper",
-  border: "1px solid #000",
+  border: "2px solid #fff",
+  borderRadius: "3px",
   boxShadow: 24,
-  borderRadius: "8px",
-  p: 2,
+  p: 4,
 };
 
 const steps = [
@@ -58,16 +58,18 @@ const steps = [
 ];
 
 const Check = () => {
+  //States
   const [activeStep, setActiveStep] = useState(0);
   const [alert, setAlert] = useState("warning"); // Set the alert value success or warning
   const [warningMsg, setWarningMsg] = useState(""); // Give the alert Message
   const [note, setNote] = useState(""); // Give details about the device,Location
   const [testCamera, setTestCamera] = useState(false); //for check camera
   const [testSpeaker, setTestSpeaker] = useState(false); //for Speaker
-  // const [testMic, setTestMic] = useState(false); //for mic,
-  // const [micCheckModal, setMicCheckModal] = useState(false); // for testing mic
+  const [isImage, setIsImage] = React.useState(false);
   const [open, setOpen] = React.useState(false); //for checking camera modal
 
+  //Methods
+  //Camera Check
   const handleOpen = () => {
     if (activeStep === 3) setOpen(true);
     setAlert("success");
@@ -77,6 +79,8 @@ const Check = () => {
   const stepIncrease = (prevActiveStep) => {
     setActiveStep(prevActiveStep + 1);
   };
+
+  //Browser Check
   const chromeCheck = () => {
     const agent = navigator.userAgent.toLowerCase();
     switch (true) {
@@ -98,6 +102,8 @@ const Check = () => {
         return "other";
     }
   };
+
+  // Mic Check
   const playSound = () => {
     const audio = document.createElement("audio");
     audio.controls = true;
@@ -107,32 +113,6 @@ const Check = () => {
     setAlert("success");
     setWarningMsg("Your Speaker works perfectly");
     setTestSpeaker(true);
-  };
-  const speakerCheck = () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      setAlert("warning");
-      setWarningMsg("Speaker Not Found");
-    } else {
-      navigator.mediaDevices
-        .enumerateDevices()
-        .then(function (devices) {
-          devices.every(function (device) {
-            if (device.kind === "audiooutput") {
-              setAlert("success");
-              setWarningMsg("Speaker Detected");
-              setTestSpeaker(true);
-              return false;
-            } else {
-              setAlert("warning");
-              setWarningMsg("Speaker Not Found");
-              return true;
-            }
-          });
-        })
-        .catch(function (err) {
-          console.log(err.name + ": " + err.message);
-        });
-    }
   };
   const micCheck = () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
@@ -161,6 +141,35 @@ const Check = () => {
     }
   };
 
+  // Speaker Check
+  const speakerCheck = () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+      setAlert("warning");
+      setWarningMsg("Speaker Not Found");
+    } else {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then(function (devices) {
+          devices.every(function (device) {
+            if (device.kind === "audiooutput") {
+              setAlert("success");
+              setWarningMsg("Speaker Detected");
+              setTestSpeaker(true);
+              return false;
+            } else {
+              setAlert("warning");
+              setWarningMsg("Speaker Not Found");
+              return true;
+            }
+          });
+        })
+        .catch(function (err) {
+          console.log(err.name + ": " + err.message);
+        });
+    }
+  };
+
+  // Location Check
   const getLocation = async (coord) => {
     try {
       let url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coord.Latitude}&longitude=${coord.Longitude}&localityLanguage=en`;
@@ -172,11 +181,12 @@ const Check = () => {
       const District = data.localityInfo.administrative[2].name.split(" ")[0];
       setNote(() => (
         <>
-          <Typography>
+          <Typography variant="body1" component="span">
             <b>Location:</b>&nbsp;
-            <br />( {`${Locality},${District},`}
             <br />
-            {`${State},${Country}`} )
+            <LocationOnIcon sx={{ color: "blue", mb: -0.8 }} />
+            {`${Locality},${District},`}
+            {`${State},${Country}`}
           </Typography>
         </>
       ));
@@ -184,6 +194,8 @@ const Check = () => {
       console.log(error);
     }
   };
+
+  // Step Processing
   const handleNext = () => {
     if (activeStep === 0) {
       if (navigator.onLine) {
@@ -215,7 +227,7 @@ const Check = () => {
       setAlert("");
       setWarningMsg(() => (
         <>
-          <RotateLeftIcon sx={{ mt: -1.5 }} />
+          <RotateLeftIcon sx={{ mb: -1.2 }} />
           Please Wait,Loading.....
         </>
       ));
@@ -263,6 +275,7 @@ const Check = () => {
     }
   };
 
+  // Back Button
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     if (activeStep === 1) {
@@ -291,6 +304,7 @@ const Check = () => {
   //on page load check for network connection
   useEffect(() => {
     handleNext();
+    setIsImage(true);
     // eslint-disable-next-line
   }, [, activeStep]);
 
@@ -303,17 +317,10 @@ const Check = () => {
         height: "120vh",
       }}
     >
-      <Container maWidth="sm">
+      <Container>
         <Grid container spacing={0} justifyContent="center">
           <Grid item lg={12} xs={12}>
-            <Box
-              sx={{
-                flexGrow: 1,
-                paddingTop: "45px",
-                textAlign: "center",
-                width: "100%",
-              }}
-            >
+            <Box sx={{ flexGrow: 1, paddingTop: "45px", width: "100%" }}>
               <Card
                 sx={{
                   backgroundColor: "#fff",
@@ -326,16 +333,23 @@ const Check = () => {
                   style={{
                     fontFamily: "sans",
                     background:
-                      " linear-gradient(to bottom, #6363e6 0%, #666699 100%)",
+                      "linear-gradient(to right, #3366cc 57%, #66ccff 100%)",
                     color: "white",
                     padding: "10px",
                   }}
                 >
+                  <CheckCircleIcon
+                    sx={{
+                      fontSize: "32px",
+                      marginBottom: "-4.3px",
+                      marginTop: "-1px",
+                    }}
+                  />{" "}
                   System Compatability Check
                 </Typography>
                 <Divider />
                 <Grid container justifyContent="center" spacing={0}>
-                  <Grid item lg={7} xs={12}>
+                  <Grid item lg={6} xs={12}>
                     <Box sx={{ maxWidth: 400, m: 5 }}>
                       <Stepper activeStep={activeStep} orientation="vertical">
                         {steps.map((step, index) => (
@@ -388,30 +402,7 @@ const Check = () => {
                                   ) : (
                                     ""
                                   )}
-                                  {/* {testMic ? (
-                                      <Typography sx={{ textAlign: "center" }}>
-                                        <Button
-                                          onClick={micCheck}
-                                          sx={{
-                                            mb: -1,
-                                            fontweight: "bold",
-                                            mr: 1,
-                                            color: "black",
-                                          }}
-                                        >
-                                          <KeyboardVoiceIcon
-                                            sx={{
-                                              color: "blue",
-                                              mb: -0.4,
-                                              padding: "4px",
-                                            }}
-                                          />
-                                          Check Your Mic
-                                        </Button>
-                                      </Typography>
-                                    ) : (
-                                      ""
-                                    )} */}
+
                                   {testCamera ? (
                                     <Typography sx={{ textAlign: "center" }}>
                                       <Button
@@ -478,17 +469,14 @@ const Check = () => {
                                           </Button>
                                         </Typography>
                                       </Card>
-
-                                      <Card sx={{ mt: 1 }}>
-                                        <Webcam
-                                          audio={false}
-                                          style={{
-                                            marginTop: "10px",
-                                            height: "520px",
-                                            width: "780px",
-                                          }}
-                                        />
-                                      </Card>
+                                      <Grid container justifyContent="center">
+                                        <Grid item xs={11} sm={10} md={8}>
+                                          <Webcam
+                                            audio={false}
+                                            className="webcam"
+                                          ></Webcam>
+                                        </Grid>
+                                      </Grid>
                                     </Box>
                                   </Modal>
 
@@ -535,23 +523,29 @@ const Check = () => {
                       )}
                     </Box>
                   </Grid>
-                  <Grid
-                    item
-                    lg={5}
-                    xs={false}
-                    sx={{
-                      backgroundImage: `url(${check2})`,
-                      backgroundRepeat: "no-repeat",
-                      backgroundColor: (t) =>
-                        t.palette.mode === "light"
-                          ? t.palette.grey[50]
-                          : t.palette.grey[900],
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      height: "360px",
-                      mt: 10,
-                    }}
-                  ></Grid>
+                  <Grow
+                    in={isImage}
+                    style={{ transformOrigin: "0 0 0 0" }}
+                    {...(true ? { timeout: 1000 } : {})}
+                  >
+                    <Grid
+                      item
+                      lg={6}
+                      xs={false}
+                      sx={{
+                        backgroundImage: `url(${connect})`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundColor: (t) =>
+                          t.palette.mode === "light"
+                            ? t.palette.grey[50]
+                            : t.palette.grey[900],
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        height: "500px",
+                        mt: 2,
+                      }}
+                    ></Grid>
+                  </Grow>
                 </Grid>
               </Card>
             </Box>
